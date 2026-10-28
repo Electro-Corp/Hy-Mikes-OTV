@@ -5,6 +5,7 @@
 #define OTV_H
 
 #define TURN_MARGIN 0.0314
+#define POSITION_MARGIN 0.05
 
 #ifdef TANK
 #include <Tank.h>
@@ -36,6 +37,9 @@ private:
   // Helpful
   static double lerp(const double v0, const double v1, const double t) {
     return (1 - t) * v0 + t * v1;
+  }
+  static double dist(const double x1, const double y1, const double x2, const double y2){
+    return sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
   }
 public:
   OTV();
