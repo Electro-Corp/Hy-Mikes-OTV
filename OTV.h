@@ -46,6 +46,8 @@ public:
 
   // Connect to the vision system
   void connect(int markerId, int roomNumber);
+  // Update internal position
+  void updatePosition();
   // Tick robot to next frame
   void tick();
   // Still completing previous task?
@@ -55,6 +57,9 @@ public:
   // Movement
   void turn(double targetAngle);
   void forward(double distance);
+
+  // Getters
+  Transform getTransform(){ return transform; }
 };
 
 #endif

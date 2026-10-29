@@ -16,6 +16,13 @@ void OTV::connect(int markerId, int roomNumber){
   Enes100.begin("Hy-Mikes", HYDROGEN, markerId, roomNumber);
 #endif
   Enes100.println("[OTV] Hydrogen Baby connected...");
+  updatePosition();
+}
+
+void OTV::updatePosition(){
+    transform.angle = Enes100.getTheta();
+    transform.x = Enes100.getX();
+    transform.y = Enes100.getY();
 }
 
 bool OTV::working(){
@@ -30,9 +37,7 @@ void OTV::tick(){
   }else{
     // Update on some tick
     if(millis() % 500 == 0){
-      transform.angle = Enes100.getTheta();
-      transform.x = Enes100.getX();
-      transform.y = Enes100.getY();
+      updatePosition();
     }
   }
 
