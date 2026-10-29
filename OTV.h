@@ -18,10 +18,10 @@ typedef struct Transform{
 };
 
 typedef enum Action{
-  TURNING = 0,
-  FORWARD = 1,
-  STRAFE = 2,
-  IDLE = 3 // todo cuz im lazy: make idle #0 and everything else above it
+  IDLE = 0,
+  TURNING = 1,
+  FORWARD = 2,
+  STRAFE = 3,
 };
 
 class OTV{
@@ -33,6 +33,7 @@ private:
   // Internal
   void turn_impl();
   void forward_impl();
+  void strafe_impl();
 
   // Helpful
   static double lerp(const double v0, const double v1, const double t) {
@@ -53,10 +54,15 @@ public:
   // Still completing previous task?
   bool working();
 
-  //
+  // 
   // Movement
+  // 
+  // Turn to [targetAngle]
   void turn(double targetAngle);
+  // Move forward [distance] in the direction we are facing
   void forward(double distance);
+  // Strafe left or right (direction determined by sign and current direction)
+  void strafe(double distance);
 
   // Getters
   Transform getTransform(){ return transform; }

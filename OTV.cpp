@@ -72,7 +72,7 @@ void OTV::forward(double distance){
   this->isWorking = true;
   // Calculate target X,Y
   double tX = cos(this->transform.angle) * distance;
-  double tY = cos(this->transform.angle) * distance;
+  double tY = sin(this->transform.angle) * distance;
   this->target.x = this->transform.x + tX;
   this->target.y = this->transform.y + tY;
 }

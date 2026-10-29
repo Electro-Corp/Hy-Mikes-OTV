@@ -2,7 +2,7 @@
   Hy-Mikes Hydrogen Baby
 */
 #define ARDUINO_UNOR4_WIFI  // IDK if this is needed but im scared to remove it
-#define TANK 1              // Define tank so OTV knows we're in tank mode (for now...)
+#define TANK                // Define tank so OTV knows we're in tank mode (for now...)
 
 #include "OTV.h"
 
@@ -15,6 +15,7 @@ typedef enum ExampleStates {
   START = 0,
   GOING_FORWARD = 1,
   TURN_90 = 2,
+  DONE = 3
 };
 
 OTV hBaby;
@@ -25,14 +26,15 @@ int state = START;
 void stage1();
 
 void setup() {
-  // put your setup code here, to run once:
+  // Create and init OTV
   hBaby = OTV();
   hBaby.connect(15, 1160);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  // Tick OTV 
   hBaby.tick();
+  // What stage are we on
   switch (currentStage) {
     case STAGE_1:
       stage1();
@@ -42,6 +44,7 @@ void loop() {
   }
 }
 
+// Goes forward and then turns and then does nothing
 void stage1() {
   if (!hBaby.working()) {
     // Move to next stage
@@ -55,6 +58,8 @@ void stage1() {
         hBaby.turn(1.5708);
         break;
       }
+      case DONE:
+        break;
       default:
         break;
     }
