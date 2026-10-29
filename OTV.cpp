@@ -4,6 +4,8 @@
 #include "OTV.h"
 
 OTV::OTV(){
+  isWorking = false;
+  currentAction = IDLE;
 #ifdef TANK
   Tank.begin();
 #endif

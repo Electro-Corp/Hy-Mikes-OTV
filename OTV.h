@@ -21,7 +21,7 @@ typedef enum Action{
   TURNING = 0,
   FORWARD = 1,
   STRAFE = 2,
-  IDLE = 3
+  IDLE = 3 // todo cuz im lazy: make idle #0 and everything else above it
 };
 
 class OTV{
