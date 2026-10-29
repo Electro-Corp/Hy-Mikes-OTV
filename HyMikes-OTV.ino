@@ -9,18 +9,17 @@
 typedef enum Stages {
   STAGE_1,
   STAGE_2
-}
+};
 
 typedef enum ExampleStates {
-  IDLE = 0,
+  START = 0,
   GOING_FORWARD = 1,
   TURN_90 = 2,
-  IDLE = 3
 };
 
 OTV hBaby;
-Stages currentStage = STAGE_1;
-ExampleStates state = IDLE;
+int currentStage = STAGE_1;
+int state = START;
 
 // Example "stage 1"
 void stage1();
@@ -46,15 +45,16 @@ void loop() {
 void stage1() {
   if (!hBaby.working()) {
     // Move to next stage
-    state++;
+    state += 1;
     switch (state) {
       case GOING_FORWARD:
         hBaby.forward(1);
         break;
-      case ROTATE_90:
+      case TURN_90: {
         double a = hBaby.getTransform().angle;
         hBaby.turn(1.5708);
         break;
+      }
       default:
         break;
     }

@@ -49,6 +49,9 @@ void OTV::tick(){
     case FORWARD:
       forward_impl();
       break;
+    case IDLE:
+      if(millis() % 1000 == 0) Enes100.println("[OTV] Idling...");
+      break;
     default:
       if(millis() % 1000 == 0) Enes100.println("[OTV] Warning: Current action is some bullshit!");
       break;
