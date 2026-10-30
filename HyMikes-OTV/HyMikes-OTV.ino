@@ -46,8 +46,11 @@ void loop() {
 // Goes forward and then turns and then does nothing
 void stage1() {
   if (!hBaby.working()) {
-    // Move to next stage
-    if(hBaby.getTransform().angle != 0 && hBaby.isConnected()) state += 1;
+    // Are we connected?
+    if(hBaby.getTransform().angle != -2000 && hBaby.isConnected()){
+        // Move to next stage
+      state += 1;
+    }
     switch (state) {
       case GOING_FORWARD:
         hBaby.forward(1);

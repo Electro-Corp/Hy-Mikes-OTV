@@ -20,7 +20,7 @@ void OTV::connect(int markerId, int roomNumber){
   Enes100.begin("Hy-Mikes", HYDROGEN, markerId, roomNumber);
 #endif
   Enes100.println("[OTV] Hydrogen Baby connected...");
-  transform.angle = 0;
+  transform.angle = -2000;
   transform.x = 0;
   transform.y = 0;
   target.angle = 0;
@@ -43,13 +43,11 @@ void OTV::tick(){
   if(!Enes100.isConnected()){
     // Guess where we are i guess
   }else{
-    // Update on some tick
-    if(millis() % 500 == 0){
-      updatePosition();
-    }
+
   }
 
-  updatePosition();
+  // Update the current position data
+  if(millis % 150 == 0) updatePosition();
 
   // Begin actions
   switch(this->currentAction){
@@ -86,11 +84,6 @@ void OTV::forward(double distance){
 void OTV::turn_impl(){
   // Turn logic for Tank, will be different for real robot
 #ifdef TANK
-  Enes100.print("our angle: ");
-  Enes100.print(transform.angle);
-  Enes100.print(" and we wanna go to: ");
-  Enes100.print(target.angle);
-  Enes100.print("\n");
   int turnDirection = 1;
   if(transform.angle - target.angle > 0) turnDirection = -1; 
   double speed = lerp(0, 255, abs(target.angle - transform.angle) / 1.2);
@@ -114,7 +107,7 @@ void OTV::forward_impl(){
   Enes100.print("\n");
   double distance = dist(transform.x, transform.y, prev.x, prev.y);
   double speed = lerp(0, 255, 1.5 / distance);
-  if(distance > targetDist){
+  if(distance > (targetDist - POSITION_MARGIN)){
     // We are in margin
     this->isWorking = false;
     this->currentAction = IDLE;
