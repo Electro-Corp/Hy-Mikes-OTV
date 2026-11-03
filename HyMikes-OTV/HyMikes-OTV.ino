@@ -33,6 +33,7 @@ void setup() {
 void loop() {
   // Tick OTV 
   hBaby.tick();
+  hBaby.readAndPrintColor();
   // What stage are we on
   switch (currentStage) {
     case STAGE_1:

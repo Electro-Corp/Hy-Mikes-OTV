@@ -7,12 +7,16 @@
 #define TURN_MARGIN 0.0314
 #define POSITION_MARGIN 0.05
 
-#define TANK                // Define tank so OTV knows we're in tank mode (for now...)
-
-#ifdef TANK
-#endif
+//#define TANK                // Define tank so OTV knows we're in tank mode (for now...)
 
 #include <Enes100.h>
+
+// Color Sensor
+#define S0 8
+#define S1 5
+#define S2 7
+#define S3 6
+#define COLOR_OUT 12
 
 typedef struct Transform{
   double x, y, angle;
@@ -31,6 +35,8 @@ private:
   double targetDist;
   bool isWorking;
   Action currentAction;
+  // Color
+  int r,g,b;
 
   // Internal
   void turn_impl();
@@ -65,6 +71,12 @@ public:
   void forward(double distance);
   // Strafe left or right (direction determined by sign and current direction)
   void strafe(double distance);
+
+
+  //
+  // Sensors
+  //
+  void readAndPrintColor();
 
   // Getters
   Transform getTransform(){ return transform; }
