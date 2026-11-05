@@ -12,14 +12,19 @@ typedef enum Stages {
 
 typedef enum ExampleStates {
   START = 0,
-  GOING_FORWARD = 1,
-  TURN_90 = 2,
-  DONE = 3
+  TURN_TO_OBJECTIVE = 1,
+  GOING_FORWARD = 2,
+  ALIGN_WITH_CELL = 3,
+  READ_SENSORS = 4,
+  REVERSE = 5,
+  TURN_TO_END = 6,
+  DONE = 7
 };
 
 OTV hBaby;
 int currentStage = STAGE_1;
 int state = START;
+int dir = 1;
 
 // Example "stage 1"
 void stage1();
@@ -31,9 +36,11 @@ void setup() {
 }
 
 void loop() {
+  delay(20);
   // Tick OTV 
   hBaby.tick();
-  hBaby.readAndPrintColor();
+  //hBaby.readAndPrintColor();
+  hBaby.readAndPrintVolt();
   // What stage are we on
   switch (currentStage) {
     case STAGE_1:
@@ -53,14 +60,24 @@ void stage1() {
       state += 1;
     }
     switch (state) {
-      case GOING_FORWARD:
-        hBaby.forward(1);
+      case TURN_TO_OBJECTIVE:
+        if(hBaby.getTransform().y > 1) dir = -1;
+        hBaby.turn(1.57);
         break;
-      case TURN_90: {
-        double a = hBaby.getTransform().angle;
-        hBaby.turn(1.5708);
+      case GOING_FORWARD:
+        hBaby.forward(0.8);
+        break;
+      case ALIGN_WITH_CELL: {
         break;
       }
+      case READ_SENSORS:
+        hBaby.readAndPrintColor();
+        hBaby.readAndPrintVolt();
+        break;
+      case REVERSE:
+        hBaby.forward(-0.8);
+      case TURN_TO_END:
+        hBaby.turn(0);
       case DONE:
         break;
       default:

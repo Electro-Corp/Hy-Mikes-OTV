@@ -17,10 +17,36 @@
 #define S2 7
 #define S3 6
 #define COLOR_OUT 12
+// Voltage
+#define VOLT A5
+// Motors (1, 2)
+#define MOTOR_1_IN1       100
+#define MOTOR_1_IN2      100
+#define MOTOR_2_IN3      100
+#define MOTOR_2_IN4       100
+#define MOTOR_1_SPEED     100
+#define MOTOR_2_SPEED     100
+// Motors (3, 4) 
+#define MOTOR_3_IN1        100
+#define MOTOR_3_IN2        100
+#define MOTOR_4_IN3 100
+#define MOTOR_4_IN4         100
+#define MOTOR_3_SPEED       100
+#define MOTOR_4_SPEED       100
+
+
 
 typedef struct Transform{
   double x, y, angle;
 };
+
+typedef struct motor {   
+	 byte speed = 0;   
+	 struct {   
+	   byte input1 = LOW;   
+	   byte input2 = LOW;   
+	 } direction;   
+};   
 
 typedef enum Action{
   IDLE = 0,
@@ -37,11 +63,16 @@ private:
   Action currentAction;
   // Color
   int r,g,b;
+  // Motors
+  motor motorA, motorB, motorC, motorD;
 
   // Internal
   void turn_impl();
   void forward_impl();
   void strafe_impl();
+
+  // Motor control
+  void motorControl(int motorNumber, int speed);
 
   // Helpful
   static double lerp(const double v0, const double v1, const double t) {
@@ -77,6 +108,7 @@ public:
   // Sensors
   //
   void readAndPrintColor();
+  void readAndPrintVolt();
 
   // Getters
   Transform getTransform(){ return transform; }

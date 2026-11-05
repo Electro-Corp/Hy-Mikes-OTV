@@ -2,8 +2,10 @@
   Hy-Mikes robot system
 */
 #include "OTV.h"
+#include "direction.h"
+#include "speed.h"
+#include "motor.h"
 #include <Tank.h>
-
 
 OTV::OTV(){
   isWorking = false;
@@ -18,14 +20,26 @@ OTV::OTV(){
   pinMode(S3, OUTPUT);
   pinMode(COLOR_OUT, INPUT);
   pinMode(2, OUTPUT);
-
-
   // Output scale 100%
   digitalWrite(S0, HIGH); 
   digitalWrite(S1, HIGH);
-
   // SHUT OFF LEDs
   digitalWrite(2, LOW); 
+  // Voltage reader
+  pinMode(VOLT, INPUT);
+  // Motor inputs 
+  pinMode(MOTOR_1_IN2     , OUTPUT);
+  pinMode(MOTOR_2_IN3    , OUTPUT);
+  pinMode(MOTOR_2_IN4   , OUTPUT);
+  pinMode(MOTOR_1_SPEED , OUTPUT);
+  pinMode(MOTOR_2_SPEED , OUTPUT);
+  // Motors (3, 4)
+  pinMode(MOTOR_3_IN1  , OUTPUT);
+  pinMode(MOTOR_3_IN2 , OUTPUT);
+  pinMode(MOTOR_4_IN3 , OUTPUT);
+  pinMode(MOTOR_4_IN4  , OUTPUT);
+  pinMode(MOTOR_3_SPEED , OUTPUT);
+  pinMode(MOTOR_4_SPEED, OUTPUT);
 }
 
 void OTV::connect(int markerId, int roomNumber){
@@ -133,6 +147,24 @@ void OTV::forward_impl(){
 #endif
 }
 
+void OTV::motorControl(int motorNumber, int speed){
+  switch(motorNumber){
+    case 1: {
+      setMotorSpeed(motorA, speed);
+      break;
+    }
+    case 2: {
+      break;
+    }
+    case 3: {
+      break;
+    }
+    case 4: {
+      break;
+    }
+  }
+}
+
 void OTV::readAndPrintColor(){
   // LOW/LOW = RED, LOW/HIGH = BLUE, HIGH/HIGH = GREEN
   // RED
@@ -146,12 +178,20 @@ void OTV::readAndPrintColor(){
   b = pulseIn(COLOR_OUT, digitalRead(COLOR_OUT) == HIGH ? LOW : HIGH);   
   //if(b < 0) b = 0;
   delay(20); 
-  // GREEWN
+  // GREEN
   digitalWrite(S2, HIGH);   
   digitalWrite(S3, HIGH);
   g = pulseIn(COLOR_OUT, digitalRead(COLOR_OUT) == HIGH ? LOW : HIGH);   
   //if(g < 0) g = 0;
   delay(20);  
+  //
+  double rToG = (double)r/(double)g;
+  double rToB = (double)r/(double)b;
+  double gToR = 1.0/rToG;
+  double gToB = (double)g/(double)b;
+  double bToG = 1.0/gToB;
+  double bToR = 1.0/rToB;
+  
   //
   Enes100.print("Color (r,g,b): (");
   Enes100.print(r);
@@ -160,13 +200,22 @@ void OTV::readAndPrintColor(){
   Enes100.print(",");
   Enes100.print(b);
   Enes100.print(") ");
-  if(/*r < 100 && g > 100 && b > 200*/ b < (g+2000)) Enes100.print(" BLUE \n");
-  else if(/*r > 150 && g < 50 && b < 10*/ r < (g+1000)) Enes100.print(" RED \n");
-  else if(/*r < 200 && g > 200 && b < 200*/ g < (b+800) && g < (r+800)) Enes100.print(" GREEN \n");
-  else if(r < (g+40) || g < (r+40) && g < (b+40) || b < (g+40) && b < (r+40) || r < (b+40)) Enes100.print(" WHITE \n");
-  else if(r > (g+100) && g > (b+50)) Enes100.print(" YELLOW \n");
+  
+  if(rToG < 0.3 && gToB < 0.5) Enes100.print(" YELLOW \n");
+  else if(rToG < 0.45 && rToB < 0.45) Enes100.print(" RED \n");
+  else if(rToG < 0.8 && rToB < 0.8) Enes100.print(" WHITE \n");
+  else if(gToR < 0.5 && gToB < 0.5) Enes100.print(" GREEN \n");
+  else if(bToG < 0.7 && bToR < 0.7) Enes100.print(" BLUE \n");
   else Enes100.print(" IDK \n");
   
+}
+
+void OTV::readAndPrintVolt(){
+  double v = analogRead(VOLT) * (5.0 / 1023.0);
+  int vOut = round(v + 0.5);
+  Enes100.print("Voltage: ");
+  Enes100.print(vOut);
+  Enes100.print("\n");
 }
 
 bool OTV::isConnected() { return Enes100.isConnected(); }
