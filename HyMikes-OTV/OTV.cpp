@@ -150,16 +150,39 @@ void OTV::forward_impl(){
 void OTV::motorControl(int motorNumber, int speed){
   switch(motorNumber){
     case 1: {
+      // Set speed and direction
       setMotorSpeed(motorA, speed);
+      if(speed < 0) setMotorDirectionBackward(motorA);
+      else setMotorDirectionForward(motorA);
+      // Send
+      sendToMotor(motorA, MOTOR_1_SPEED, MOTOR_1_IN1, MOTOR_1_IN2);
       break;
     }
     case 2: {
+      // Set speed and direction
+      setMotorSpeed(motorB, speed);
+      if(speed < 0) setMotorDirectionBackward(motorB);
+      else setMotorDirectionForward(motorB);
+      // Send
+      sendToMotor(motorB, MOTOR_2_SPEED, MOTOR_2_IN3, MOTOR_2_IN4);
       break;
     }
     case 3: {
+      // Set speed and direction
+      setMotorSpeed(motorC, speed);
+      if(speed < 0) setMotorDirectionBackward(motorC);
+      else setMotorDirectionForward(motorC);
+      // Send
+      sendToMotor(motorC, MOTOR_3_SPEED, MOTOR_3_IN1, MOTOR_3_IN2);
       break;
     }
     case 4: {
+      // Set speed and direction
+      setMotorSpeed(motorD, speed);
+      if(speed < 0) setMotorDirectionBackward(motorD);
+      else setMotorDirectionForward(motorD);
+      // Send
+      sendToMotor(motorD, MOTOR_4_SPEED, MOTOR_4_IN3, MOTOR_4_IN4);
       break;
     }
   }
