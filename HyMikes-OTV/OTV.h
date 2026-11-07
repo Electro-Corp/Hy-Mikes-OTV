@@ -63,7 +63,8 @@ private:
   Action currentAction;
   // Color
   int r,g,b;
-  // Motors
+  // Motors 
+  //     TL      TR      BR      BL
   motor motorA, motorB, motorC, motorD;
 
   // Internal

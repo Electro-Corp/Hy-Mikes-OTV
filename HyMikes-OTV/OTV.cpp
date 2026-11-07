@@ -109,10 +109,15 @@ void OTV::forward(double distance){
   targetDist = distance;
 }
 
+void OTV::strafe(double distance){
+  this->currentAction = STRAFE;
+  this->isWorking = true;
+  this->prev = transform;
+  targetDist = distance;
+}
+
 // Internal function for rotation for the OTV
 void OTV::turn_impl(){
-  // Turn logic for Tank, will be different for real robot
-#ifdef TANK
   int turnDirection = 1;
   if(transform.angle - target.angle > 0) turnDirection = -1; 
   double speed = lerp(0, 255, abs(target.angle - transform.angle) / 1.2);
@@ -122,15 +127,21 @@ void OTV::turn_impl(){
     this->currentAction = IDLE;
     speed = 0;
   }
+#ifdef TANK
   //transform.angle += speed * (abs(target.angle - transform.angle) / 255);
   Tank.setRightMotorPWM(speed * turnDirection);
   Tank.setLeftMotorPWM(-speed * turnDirection); 
+#else
+  // Mecanum
+  motorControl(1, speed);
+  motorControl(2, -speed);
+  motorControl(3, -speed);
+  motorControl(4, speed);
 #endif
 }
 
 // Internal function for rotation for the OTV
 void OTV::forward_impl(){
-#ifdef TANK
   Enes100.print("forward ");
   Enes100.print(dist(transform.x, transform.y, prev.x, prev.y));
   Enes100.print("\n");
@@ -142,9 +153,36 @@ void OTV::forward_impl(){
     this->currentAction = IDLE;
     speed = 0;
   }
+#ifdef TANK
   Tank.setRightMotorPWM(speed);
   Tank.setLeftMotorPWM(speed); 
+#else
+  // Mecanum
+  motorControl(1, speed);
+  motorControl(2, speed);
+  motorControl(3, speed);
+  motorControl(4, speed);
 #endif
+}
+
+// Internal function for strafeing 
+void OTV::strafe_impl(){
+  Enes100.print("strafe ");
+  Enes100.print(dist(transform.x, transform.y, prev.x, prev.y));
+  Enes100.print("\n");
+  double distance = dist(transform.x, transform.y, prev.x, prev.y);
+  double speed = lerp(0, 255, 1.5 / distance);
+  if(distance > (targetDist - POSITION_MARGIN)){
+    // We are in margin
+    this->isWorking = false;
+    this->currentAction = IDLE;
+    speed = 0;
+  }
+  // Mecanum
+  motorControl(1, speed);
+  motorControl(2, -speed);
+  motorControl(3, speed);
+  motorControl(4, -speed);
 }
 
 void OTV::motorControl(int motorNumber, int speed){
