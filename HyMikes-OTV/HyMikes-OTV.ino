@@ -7,10 +7,11 @@
 
 typedef enum Stages {
   STAGE_1,
-  STAGE_2
+  STAGE_2,
+  STAGE_MS5
 };
 
-typedef enum ExampleStates {
+typedef enum STAGE_1_STATES {
   START = 0,
   TURN_TO_OBJECTIVE = 1,
   GOING_FORWARD = 2,
@@ -21,6 +22,15 @@ typedef enum ExampleStates {
   DONE = 7
 };
 
+typedef enum MS_5_STATES {
+  START = 0,
+  GOING_FORWARD = 1,
+  TURN_1 = 2,
+  TURN_2 = 3,
+  TURN_3 = 4,
+  DONE = 5
+};
+
 OTV hBaby;
 int currentStage = STAGE_1;
 int state = START;
@@ -28,6 +38,7 @@ int dir = 1;
 
 // Example "stage 1"
 void stage1();
+void ms5();
 
 void setup() {
   // Create and init OTV
@@ -48,6 +59,34 @@ void loop() {
       break;
     default:
       break;
+  }
+}
+
+void ms5(){
+  if (!hBaby.working()) {
+    // Are we connected?
+    if(hBaby.getTransform().angle != -2000 && hBaby.isConnected()){
+        // Move to next stage
+      state += 1;
+    }
+    switch (state) {
+      case GOING_FORWARD:
+        hBaby.forward(4);
+        break;
+      case TURN_1:
+        hBaby.turn(90);
+        break;
+      case TURN_2:
+        hBaby.turn(180);
+        break;
+      case TURN_3:
+        hBaby.turn(270);
+        break;
+      case DONE:
+        break;
+      default:
+        break;
+    }
   }
 }
 

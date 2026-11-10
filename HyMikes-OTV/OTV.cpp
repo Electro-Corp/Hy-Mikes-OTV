@@ -54,6 +54,19 @@ void OTV::connect(int markerId, int roomNumber){
   transform.y = 0;
   target.angle = 0;
   updatePosition();
+
+  // Figure out where we are
+  Enes100.println("Inital Robot Position:");
+  Enes100.print("X: ");
+  Enes100.print(transform.x);
+  Enes100.print(" Y: ");
+  Enes100.print(transform.y);
+  Enes100.print(" Theta: ");
+  Enes100.print(transform.angle);
+  Enes100.println();
+  Enes100.print("We are: ");
+  Enes100.print(transform.y > 1 ? "Above" : "Below");
+  Enes100.println();
 }
 
 void OTV::updatePosition(){
