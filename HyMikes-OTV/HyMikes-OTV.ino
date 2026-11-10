@@ -55,7 +55,8 @@ void loop() {
   // What stage are we on
   switch (currentStage) {
     case STAGE_1:
-      stage1();
+      // stage1();
+      ms5(); // temp for ms5
       break;
     default:
       break;
@@ -68,6 +69,7 @@ void ms5(){
     if(hBaby.getTransform().angle != -2000 && hBaby.isConnected()){
         // Move to next stage
       state += 1;
+      delay(1000); // this is specifically for MS5, we can comment it out later
     }
     switch (state) {
       case GOING_FORWARD:
