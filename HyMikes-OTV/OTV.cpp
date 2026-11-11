@@ -155,9 +155,6 @@ void OTV::turn_impl(){
 
 // Internal function for rotation for the OTV
 void OTV::forward_impl(){
-  Enes100.print("forward ");
-  Enes100.print(dist(transform.x, transform.y, prev.x, prev.y));
-  Enes100.print("\n");
   double distance = dist(transform.x, transform.y, prev.x, prev.y);
   double speed = lerp(0, 255, 1.5 / distance);
   if(distance > (targetDist - POSITION_MARGIN)){
@@ -169,13 +166,17 @@ void OTV::forward_impl(){
 #ifdef TANK
   Tank.setRightMotorPWM(speed);
   Tank.setLeftMotorPWM(speed); 
-#else
+#endif
+  Enes100.print("forward ");
+  Enes100.print(distance);
+  Enes100.print(" at ");
+  Enes100.print(speed);
+  Enes100.print("\n");
   // Mecanum
   motorControl(1, speed);
   motorControl(2, speed);
   motorControl(3, speed);
   motorControl(4, speed);
-#endif
 }
 
 // Internal function for strafeing 

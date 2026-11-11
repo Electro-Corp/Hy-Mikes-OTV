@@ -23,12 +23,10 @@ typedef enum STAGE_1_STATES {
 };
 
 typedef enum MS_5_STATES {
-  START = 0,
-  GOING_FORWARD = 1,
+  GOING_FORWARD_5 = 1,
   TURN_1 = 2,
   TURN_2 = 3,
-  TURN_3 = 4,
-  DONE = 5
+  TURN_3 = 4
 };
 
 OTV hBaby;
@@ -43,7 +41,7 @@ void ms5();
 void setup() {
   // Create and init OTV
   hBaby = OTV();
-  hBaby.connect(170, 1116);
+  hBaby.connect(170, 1201); //1116 class+
 }
 
 void loop() {
@@ -51,7 +49,7 @@ void loop() {
   // Tick OTV 
   hBaby.tick();
   //hBaby.readAndPrintColor();
-  hBaby.readAndPrintVolt();
+  //hBaby.readAndPrintVolt();
   // What stage are we on
   switch (currentStage) {
     case STAGE_1:
@@ -72,7 +70,7 @@ void ms5(){
       delay(1000); // this is specifically for MS5, we can comment it out later
     }
     switch (state) {
-      case GOING_FORWARD:
+      case GOING_FORWARD_5:
         hBaby.forward(4);
         break;
       case TURN_1:

@@ -20,18 +20,18 @@
 // Voltage
 #define VOLT A5
 // Motors (1, 2)
-#define MOTOR_1_IN1       100
-#define MOTOR_1_IN2      100
-#define MOTOR_2_IN3      100
-#define MOTOR_2_IN4       100
-#define MOTOR_1_SPEED     100
-#define MOTOR_2_SPEED     100
+#define MOTOR_1_IN1         6
+#define MOTOR_1_IN2         5
+#define MOTOR_2_IN3         100
+#define MOTOR_2_IN4         100
+#define MOTOR_1_SPEED       7
+#define MOTOR_2_SPEED       100
 // Motors (3, 4) 
-#define MOTOR_3_IN1        100
-#define MOTOR_3_IN2        100
-#define MOTOR_4_IN3 100
+#define MOTOR_3_IN1         4
+#define MOTOR_3_IN2         3
+#define MOTOR_4_IN3         100
 #define MOTOR_4_IN4         100
-#define MOTOR_3_SPEED       100
+#define MOTOR_3_SPEED       2
 #define MOTOR_4_SPEED       100
 
 
