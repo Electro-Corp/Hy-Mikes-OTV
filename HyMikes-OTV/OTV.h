@@ -12,7 +12,7 @@
 #include <Enes100.h>
 
 // Color Sensor
-#define S0 8
+#define S0 8        // we need to reassign pins cuz overlap
 #define S1 5
 #define S2 7
 #define S3 6
@@ -20,20 +20,19 @@
 // Voltage
 #define VOLT A5
 // Motors (1, 2)
-#define MOTOR_1_IN1         6
+#define MOTOR_1_IN1         7
 #define MOTOR_1_IN2         5
-#define MOTOR_2_IN3         100
-#define MOTOR_2_IN4         100
-#define MOTOR_1_SPEED       7
-#define MOTOR_2_SPEED       100
+#define MOTOR_2_IN3         11
+#define MOTOR_2_IN4         12
+#define MOTOR_1_SPEED       6
+#define MOTOR_2_SPEED       10
 // Motors (3, 4) 
-#define MOTOR_3_IN1         4
-#define MOTOR_3_IN2         3
-#define MOTOR_4_IN3         100
-#define MOTOR_4_IN4         100
-#define MOTOR_3_SPEED       2
-#define MOTOR_4_SPEED       100
-
+#define MOTOR_3_IN1         13
+#define MOTOR_3_IN2         8
+#define MOTOR_4_IN3         4
+#define MOTOR_4_IN4         2
+#define MOTOR_3_SPEED       9
+#define MOTOR_4_SPEED       3
 
 
 typedef struct Transform{
@@ -72,9 +71,6 @@ private:
   void forward_impl();
   void strafe_impl();
 
-  // Motor control
-  void motorControl(int motorNumber, int speed);
-
   // Helpful
   static double lerp(const double v0, const double v1, const double t) {
     return (1 - t) * v0 + t * v1;
@@ -93,6 +89,9 @@ public:
   void tick();
   // Still completing previous task?
   bool working();
+
+    // Motor control
+  void motorControl(int motorNumber, int speed);
 
   // 
   // Movement

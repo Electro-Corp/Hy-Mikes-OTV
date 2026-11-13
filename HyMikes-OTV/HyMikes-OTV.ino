@@ -8,7 +8,7 @@
 typedef enum Stages {
   STAGE_1,
   STAGE_2,
-  STAGE_MS5
+  STAGE_MS
 };
 
 typedef enum STAGE_1_STATES {
@@ -26,11 +26,12 @@ typedef enum MS_5_STATES {
   GOING_FORWARD_5 = 1,
   TURN_1 = 2,
   TURN_2 = 3,
-  TURN_3 = 4
+  TURN_3 = 4,
+  MS5_DONE = 5
 };
 
 OTV hBaby;
-int currentStage = STAGE_1;
+int currentStage = STAGE_MS; // STAGE_1 default, STAGE_MS for Milestones
 int state = START;
 int dir = 1;
 
@@ -41,20 +42,26 @@ void ms5();
 void setup() {
   // Create and init OTV
   hBaby = OTV();
-  hBaby.connect(170, 1201); //1116 class+
+  hBaby.connect(170, 1116); //1116 class
 }
 
 void loop() {
   delay(20);
   // Tick OTV 
   hBaby.tick();
+  // hBaby.motorControl(1, 255);
+  // hBaby.motorControl(2, 255);
+  // hBaby.motorControl(3, 255);
+  // hBaby.motorControl(4, 255);
   //hBaby.readAndPrintColor();
   //hBaby.readAndPrintVolt();
   // What stage are we on
   switch (currentStage) {
     case STAGE_1:
-      // stage1();
-      ms5(); // temp for ms5
+      stage1();
+      break;
+    case STAGE_MS:
+      ms5();
       break;
     default:
       break;
@@ -64,7 +71,7 @@ void loop() {
 void ms5(){
   if (!hBaby.working()) {
     // Are we connected?
-    if(hBaby.getTransform().angle != -2000 && hBaby.isConnected()){
+    if(state != MS5_DONE && hBaby.getTransform().angle != -2000 && hBaby.isConnected()){
         // Move to next stage
       state += 1;
       delay(1000); // this is specifically for MS5, we can comment it out later
@@ -74,15 +81,15 @@ void ms5(){
         hBaby.forward(4);
         break;
       case TURN_1:
-        hBaby.turn(90);
+        hBaby.turn(1.5708); // 1.5708 is 90 degrees in radians
         break;
       case TURN_2:
-        hBaby.turn(180);
+        hBaby.turn(1.5708*2);
         break;
       case TURN_3:
-        hBaby.turn(270);
+        hBaby.turn(1.5708*3);
         break;
-      case DONE:
+      case MS5_DONE:
         break;
       default:
         break;
@@ -94,14 +101,14 @@ void ms5(){
 void stage1() {
   if (!hBaby.working()) {
     // Are we connected?
-    if(hBaby.getTransform().angle != -2000 && hBaby.isConnected()){
+    if(state != DONE && hBaby.getTransform().angle != -2000 && hBaby.isConnected()){
         // Move to next stage
       state += 1;
     }
     switch (state) {
       case TURN_TO_OBJECTIVE:
         if(hBaby.getTransform().y > 1) dir = -1;
-        hBaby.turn(1.57);
+        hBaby.turn(1.5708);
         break;
       case GOING_FORWARD:
         hBaby.forward(0.8);
@@ -115,8 +122,10 @@ void stage1() {
         break;
       case REVERSE:
         hBaby.forward(-0.8);
+        break;
       case TURN_TO_END:
         hBaby.turn(0);
+        break;
       case DONE:
         break;
       default:

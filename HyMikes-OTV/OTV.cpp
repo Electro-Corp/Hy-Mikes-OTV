@@ -28,6 +28,7 @@ OTV::OTV(){
   // Voltage reader
   pinMode(VOLT, INPUT);
   // Motor inputs 
+  pinMode(MOTOR_1_IN1    , OUTPUT);
   pinMode(MOTOR_1_IN2     , OUTPUT);
   pinMode(MOTOR_2_IN3    , OUTPUT);
   pinMode(MOTOR_2_IN4   , OUTPUT);
@@ -41,6 +42,8 @@ OTV::OTV(){
   pinMode(MOTOR_3_SPEED , OUTPUT);
   pinMode(MOTOR_4_SPEED, OUTPUT);
 }
+
+static unsigned long lastUpdate = 0; // I'm testing this for alternative updatePosition statement
 
 void OTV::connect(int markerId, int roomNumber){
 #ifdef TANK
@@ -89,7 +92,12 @@ void OTV::tick(){
   }
 
   // Update the current position data
-  if(millis() % 150 == 0) updatePosition();
+  // if(millis() % 150 == 0) updatePosition(); // TEMPORARILY COMMENTED OUT
+
+  if (millis() - lastUpdate >= 150) { // alternative 
+    updatePosition();
+    lastUpdate = millis();
+  }
 
   // Begin actions
   switch(this->currentAction){
@@ -98,6 +106,9 @@ void OTV::tick(){
       break;
     case FORWARD:
       forward_impl();
+      break;
+    case STRAFE:
+      strafe_impl();
       break;
     case IDLE:
       if(millis() % 1000 == 0) Enes100.println("[OTV] Idling...");
@@ -116,6 +127,7 @@ void OTV::turn(double targetAngle){
 }
 
 void OTV::forward(double distance){
+  Enes100.println("forward command recivied");
   this->currentAction = FORWARD;
   this->isWorking = true;
   this->prev = transform;
@@ -133,7 +145,7 @@ void OTV::strafe(double distance){
 void OTV::turn_impl(){
   int turnDirection = 1;
   if(transform.angle - target.angle > 0) turnDirection = -1; 
-  double speed = lerp(0, 255, abs(target.angle - transform.angle) / 1.2);
+  double speed = lerp(70, 255, abs(target.angle - transform.angle) / 1.2);
   if(abs(target.angle - transform.angle) <= TURN_MARGIN){
     // We are in margin
     this->isWorking = false;
@@ -146,17 +158,20 @@ void OTV::turn_impl(){
   Tank.setLeftMotorPWM(-speed * turnDirection); 
 #else
   // Mecanum
-  motorControl(1, speed);
-  motorControl(2, -speed);
-  motorControl(3, -speed);
-  motorControl(4, speed);
+  motorControl(1, speed * turnDirection);
+  motorControl(2, -speed * turnDirection);
+  motorControl(3, -speed * turnDirection);
+  motorControl(4, speed * turnDirection);
 #endif
 }
 
 // Internal function for rotation for the OTV
 void OTV::forward_impl(){
   double distance = dist(transform.x, transform.y, prev.x, prev.y);
-  double speed = lerp(0, 255, 1.5 / distance);
+  if (distance < 0.001) {
+    distance = 0.5;
+  }
+  double speed = lerp(10, 255, 1.5 / distance);
   if(distance > (targetDist - POSITION_MARGIN)){
     // We are in margin
     this->isWorking = false;
@@ -173,10 +188,11 @@ void OTV::forward_impl(){
   Enes100.print(speed);
   Enes100.print("\n");
   // Mecanum
-  motorControl(1, speed);
-  motorControl(2, speed);
-  motorControl(3, speed);
-  motorControl(4, speed);
+  motorControl(1, 255);
+  motorControl(2, 255);
+  motorControl(3, 255);
+  motorControl(4, 255);
+//#endif
 }
 
 // Internal function for strafeing 
@@ -203,36 +219,36 @@ void OTV::motorControl(int motorNumber, int speed){
   switch(motorNumber){
     case 1: {
       // Set speed and direction
-      setMotorSpeed(motorA, speed);
-      if(speed < 0) setMotorDirectionBackward(motorA);
-      else setMotorDirectionForward(motorA);
+      if(speed < 0) setMotorDirectionForward(motorA); // this is actually inverted, so forward is backward
+      else setMotorDirectionBackward(motorA);
+      setMotorSpeed(motorA, abs(speed));
       // Send
       sendToMotor(motorA, MOTOR_1_SPEED, MOTOR_1_IN1, MOTOR_1_IN2);
       break;
     }
     case 2: {
       // Set speed and direction
-      setMotorSpeed(motorB, speed);
-      if(speed < 0) setMotorDirectionBackward(motorB);
-      else setMotorDirectionForward(motorB);
+      if(speed < 0) setMotorDirectionForward(motorB);
+      else setMotorDirectionBackward(motorB);
+      setMotorSpeed(motorB, abs(speed));
       // Send
       sendToMotor(motorB, MOTOR_2_SPEED, MOTOR_2_IN3, MOTOR_2_IN4);
       break;
     }
     case 3: {
       // Set speed and direction
-      setMotorSpeed(motorC, speed);
-      if(speed < 0) setMotorDirectionBackward(motorC);
-      else setMotorDirectionForward(motorC);
+      if(speed < 0) setMotorDirectionForward(motorC);
+      else setMotorDirectionBackward(motorC);
+      setMotorSpeed(motorC, abs(speed));
       // Send
       sendToMotor(motorC, MOTOR_3_SPEED, MOTOR_3_IN1, MOTOR_3_IN2);
       break;
     }
     case 4: {
       // Set speed and direction
-      setMotorSpeed(motorD, speed);
-      if(speed < 0) setMotorDirectionBackward(motorD);
-      else setMotorDirectionForward(motorD);
+      if(speed < 0) setMotorDirectionForward(motorD);
+      else setMotorDirectionBackward(motorD);
+      setMotorSpeed(motorD, abs(speed));
       // Send
       sendToMotor(motorD, MOTOR_4_SPEED, MOTOR_4_IN3, MOTOR_4_IN4);
       break;
@@ -289,7 +305,7 @@ void OTV::readAndPrintVolt(){
   double v = analogRead(VOLT) * (5.0 / 1023.0);
   int vOut = round(v + 0.5);
   Enes100.print("Voltage: ");
-  Enes100.print(vOut);
+  Enes100.print(v);
   Enes100.print("\n");
 }
 
