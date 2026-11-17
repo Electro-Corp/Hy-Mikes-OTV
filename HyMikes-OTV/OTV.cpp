@@ -52,7 +52,7 @@ void OTV::connect(int markerId, int roomNumber){
   Enes100.begin("Hy-Mikes", HYDROGEN, markerId, roomNumber);
 #endif
   Enes100.println("[OTV] Hydrogen Baby connected...");
-  transform.angle = -2000;
+  transform.angle = -1.00;
   transform.x = 0;
   transform.y = 0;
   target.angle = 0;
@@ -73,9 +73,9 @@ void OTV::connect(int markerId, int roomNumber){
 }
 
 void OTV::updatePosition(){
-  transform.angle = Enes100.getTheta();
-  transform.x = Enes100.getX();
-  transform.y = Enes100.getY();
+  transform.angle = Enes100.getTheta() == -1.00 ? transform.angle : Enes100.getTheta();
+  transform.x = Enes100.getX() == -1.00 ? transform.x : Enes100.getX();
+  transform.y = Enes100.getY() == -1.00 ? transform.y : Enes100.getY();
 }
 
 bool OTV::working(){
@@ -182,16 +182,33 @@ void OTV::forward_impl(){
   Tank.setRightMotorPWM(speed);
   Tank.setLeftMotorPWM(speed); 
 #endif
-  Enes100.print("forward ");
+  Enes100.print("Moved ");
   Enes100.print(distance);
-  Enes100.print(" at ");
-  Enes100.print(speed);
-  Enes100.print("\n");
-  // Mecanum
-  motorControl(1, 255);
-  motorControl(2, 255);
-  motorControl(3, 255);
-  motorControl(4, 255);
+  //Enes100.print(" at ");
+  //Enes100.print(speed);
+  Enes100.print(" meters out of ");
+  Enes100.print(targetDist);
+  Enes100.print(" meters...\n");
+  if(transform.angle > prev.angle + 0.3){
+    // Turn right
+    motorControl(1, -255);
+    motorControl(2, 255);
+    motorControl(3, 255);
+    motorControl(4, -255);
+  }else if(transform.angle < prev.angle - 0.3){
+    // Turn left
+    motorControl(1, 255);
+    motorControl(2, -255);
+    motorControl(3, -255);
+    motorControl(4, 255);
+  }else{
+    // Mecanum
+    motorControl(1, 255);
+    motorControl(2, 255);
+    motorControl(3, 255);
+    motorControl(4, 255);
+  }
+  
 //#endif
 }
 

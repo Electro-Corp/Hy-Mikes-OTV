@@ -71,7 +71,7 @@ void loop() {
 void ms5(){
   if (!hBaby.working()) {
     // Are we connected?
-    if(state != MS5_DONE && hBaby.getTransform().angle != -2000 && hBaby.isConnected()){
+    if(state != MS5_DONE && hBaby.getTransform().angle != -1.0 && hBaby.isConnected()){
         // Move to next stage
       state += 1;
       delay(1000); // this is specifically for MS5, we can comment it out later
